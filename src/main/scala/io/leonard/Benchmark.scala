@@ -23,16 +23,22 @@ object Benchmark extends App {
       commandRunner.run(Seq("sbt", "sbtVersion"), "Test sbt startup")
     val compile = commandRunner.run(Seq("sbt", "cpl"), "Compile project once")
     val repeatedClassPathHashing = commandRunner.run(
-      Seq("sbt", """";cpl;cpl""""),
+      Seq("sbt", ";cpl;cpl"),
       "Compile project twice, testing repeated hashing of an unchanged classpath")
 
-    val report = Report(commandRunner.projectName, commandRunner.sbtVersion, now, Seq(update, startup, compile, repeatedClassPathHashing))
+    val report = Report(commandRunner.projectName,
+                        commandRunner.sbtVersion,
+                        now,
+                        Seq(update, startup, compile, repeatedClassPathHashing))
     report.writeToFile
   }
 
 }
 
-case class Report(projectName: String, sbtVersion: String, time: OffsetDateTime, commands: Seq[RunResult]) {
+case class Report(projectName: String,
+                  sbtVersion: String,
+                  time: OffsetDateTime,
+                  commands: Seq[RunResult]) {
 
   def fileName = s"reports/$time.json"
 
@@ -69,7 +75,8 @@ case class SbtProject(projectName: String) {
   lazy val sbtVersion = {
     val x = Source
       .fromFile(s"test-projects/$projectName/project/build.properties")
-      .mkString("").trim
+      .mkString("")
+      .trim
     x.split("=").last
   }
 }

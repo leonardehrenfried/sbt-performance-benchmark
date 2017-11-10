@@ -57,7 +57,7 @@ case class SbtProject(projectName: String) {
   def run(id: String, command: Seq[String], description: String): Seq[RunResult] = {
 
     sbtVersions.map { version =>
-      val prefixedCommand = Seq("sbt", "-version", version) ++ command
+      val prefixedCommand = Seq("sbt", "-sbt-version", version) ++ command
       println("")
       println(s"Running command '${prefixedCommand.mkString(" ")}', description: '$description'")
 

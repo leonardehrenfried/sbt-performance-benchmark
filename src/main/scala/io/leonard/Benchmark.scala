@@ -29,7 +29,7 @@ object Benchmark extends App {
     )
 
     val report = Report(commandRunner.projectName, now, results)
-    report.writeToFile()
+    report.writeJson()
 
 
     val htmlReport = index(report)
@@ -41,9 +41,15 @@ case class Report(projectName: String, time: OffsetDateTime, results: Seq[TaskRe
 
   def fileName = s"reports/$projectName-$time.json"
 
-  def writeToFile(): Unit = {
-    Files.write(Paths.get(fileName), this.asJson.toString().getBytes(StandardCharsets.UTF_8))
+  lazy val sbtVersions: Set[SbtVersion] = results.flatMap(_.sbtVersions).toSet
+
+  def writeJson(): Unit = Files.write(Paths.get(fileName), this.asJson.toString().getBytes(StandardCharsets.UTF_8))
+  def writeHtml(): Unit = {
+    val renderedHtml = html.index(this).body
+    Files.write(Paths.get("reports/index.html"), renderedHtml.getBytes(StandardCharsets.UTF_8))
   }
+
+
 }
 
 case class SbtVersionResult(sbtVersion: SbtVersion, durationMillis: Long, log: String)

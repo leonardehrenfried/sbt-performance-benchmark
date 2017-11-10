@@ -1,7 +1,5 @@
 package io.leonard
 
-import java.nio.charset.StandardCharsets
-import java.nio.file.{Files, Paths}
 
 import scala.io.Source
 import io.circe.java8.time._
@@ -17,9 +15,7 @@ object WriteHtml extends App {
     val Right(json) = parse(lines)
     val report = json.as[Report].getOrElse(???)
 
-    val renderedHtml = html.index(report).body
-
-    Files.write(Paths.get("reports/index.html"), renderedHtml.getBytes(StandardCharsets.UTF_8))
+    report.writeHtml()
   }
 
 }

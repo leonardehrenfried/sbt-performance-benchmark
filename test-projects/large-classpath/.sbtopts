@@ -1,1 +1,2 @@
 -Dsbt.log.noformat=true
+-mem 4096

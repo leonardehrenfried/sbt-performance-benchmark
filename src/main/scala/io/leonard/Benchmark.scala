@@ -8,6 +8,8 @@ import io.circe.syntax._
 import java.nio.file.{Files, Paths}
 import java.nio.charset.StandardCharsets
 
+import html.index
+
 object Benchmark extends App {
 
   override def main(args: Array[String]): Unit = {
@@ -26,9 +28,11 @@ object Benchmark extends App {
       )
     )
 
-    val report =
-      Report(commandRunner.projectName, now, results)
+    val report = Report(commandRunner.projectName, now, results)
     report.writeToFile()
+
+
+    val htmlReport = index(report)
   }
 
 }
@@ -47,8 +51,7 @@ case class TaskResult(id: String,
                       command: Seq[String],
                       description: String,
                       sbtVersions: Seq[SbtVersion],
-                      results: Map[TaskId, SbtVersionResult],
-)
+                      commands: Map[TaskId, SbtVersionResult])
 
 case class SbtProject(projectName: String) {
 

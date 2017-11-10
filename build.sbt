@@ -11,4 +11,6 @@ libraryDependencies ++= Seq(
   "io.circe" %% "circe-java8",
 ).map(_ % circeVersion)
 
+enablePlugins(SbtTwirl)
+
 

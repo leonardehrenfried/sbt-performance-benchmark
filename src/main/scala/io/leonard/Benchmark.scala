@@ -8,8 +8,6 @@ import io.circe.syntax._
 import java.nio.file.{Files, Paths}
 import java.nio.charset.StandardCharsets
 
-import scala.io.Source
-
 object Benchmark extends App {
 
   override def main(args: Array[String]): Unit = {
@@ -18,63 +16,62 @@ object Benchmark extends App {
     val now = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC)
 
     val results = Seq(
-      commandRunner.run(Seq("sbt", "cpl"), "Prefill artifact cache"),
-      commandRunner.run(Seq("sbt", "sbtVersion"), "Test sbt startup"),
-      commandRunner.run(Seq("sbt", "cpl"), "Compile project once, nothing to compile"),
+      commandRunner.run("prefillCache", Seq("cpl"), "Prefill artifact cache"),
+      commandRunner.run("startup", Seq("sbtVersion"), "Test sbt startup"),
+      commandRunner.run("compile", Seq("cpl"), "Compile project once, nothing to compile"),
       commandRunner.run(
-        Seq("sbt", ";cpl;cpl"), // sys.process is adding quotes so none here
-        "Compile project twice (nothing to compile), testing repeated hashing of an unchanged classpath")
+        "compileTwice",
+        Seq(";cpl;cpl"), // sys.process is adding quotes so none here
+        "Compile project twice (nothing to compile), testing repeated hashing of an unchanged classpath"
+      )
     )
 
+    val map = results.flatten.groupBy(_.sbtVersion)
     val report =
-      Report(commandRunner.projectName, commandRunner.sbtVersion, now, results)
-    report.writeToFile
+      Report(commandRunner.projectName, now, map)
+    report.writeToFile()
   }
 
 }
 
-case class Report(projectName: String,
-                  sbtVersion: String,
-                  time: OffsetDateTime,
-                  commands: Seq[RunResult]) {
+case class Report(projectName: String, time: OffsetDateTime, result: Map[String, Seq[RunResult]]) {
 
   def fileName = s"reports/$projectName-$time.json"
 
-  def writeToFile: Unit = {
-    Files.write(Paths.get(fileName),
-                this.asJson.toString().getBytes(StandardCharsets.UTF_8))
+  def writeToFile(): Unit = {
+    Files.write(Paths.get(fileName), this.asJson.toString().getBytes(StandardCharsets.UTF_8))
   }
 }
 
-case class RunResult(command: Seq[String],
+case class RunResult(id: String,
+                     command: Seq[String],
                      description: String,
+                     sbtVersion: String,
                      durationMillis: Long,
                      log: String)
 
 case class SbtProject(projectName: String) {
 
-  def run(command: Seq[String], description: String): RunResult = {
-    println("")
-    println(
-      s"Running command '${command.mkString(" ")}', description: '$description'")
+  val sbtVersions = Seq("0.13.16", "1.0.3")
 
-    val before = System.currentTimeMillis()
-    val log = sys.process
-      .Process(command, new java.io.File(s"test-projects/$projectName"))
-      .!!
+  def run(id: String, command: Seq[String], description: String): Seq[RunResult] = {
 
-    val after = System.currentTimeMillis()
+    sbtVersions.map { version =>
+      val prefixedCommand = Seq("sbt", "-version", version) ++ command
+      println("")
+      println(s"Running command '${prefixedCommand.mkString(" ")}', description: '$description'")
 
-    val duration = after - before
-    println(s"Running command '${command.mkString(" ")}' took $duration ms")
-    RunResult(command, description, duration, log)
+      val before = System.currentTimeMillis()
+      val log = sys.process
+        .Process(prefixedCommand, new java.io.File(s"test-projects/$projectName"))
+        .!!
+
+      val after = System.currentTimeMillis()
+
+      val duration = after - before
+      println(s"Running command '${command.mkString(" ")}' took $duration ms")
+      RunResult(id, command, description, version, duration, log)
+    }
   }
 
-  lazy val sbtVersion = {
-    val x = Source
-      .fromFile(s"test-projects/$projectName/project/build.properties")
-      .mkString("")
-      .trim
-    x.split("=").last
-  }
 }

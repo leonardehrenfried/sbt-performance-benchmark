@@ -5,10 +5,12 @@ import java.time.{OffsetDateTime, ZoneOffset}
 import io.circe.java8.time._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import java.nio.file.{Paths, Files}
+import java.nio.file.{Files, Paths}
 import java.nio.charset.StandardCharsets
 
-object Hello extends App {
+import scala.io.Source
+
+object Benchmark extends App {
 
   override def main(args: Array[String]): Unit = {
     val commandRunner = SbtProject("large-classpath")
@@ -17,19 +19,23 @@ object Hello extends App {
 
     val update =
       commandRunner.run(Seq("sbt", "update"), "Prefill artifact cache")
+    val startup =
+      commandRunner.run(Seq("sbt", "sbtVersion"), "Test sbt startup")
     val compile = commandRunner.run(Seq("sbt", "cpl"), "Compile project once")
     val repeatedClassPathHashing = commandRunner.run(
-      Seq("sbt", "'; cpl; cpl'"),
+      Seq("sbt", """";cpl;cpl""""),
       "Compile project twice, testing repeated hashing of an unchanged classpath")
 
-    val report = Report(now, Seq(update, compile, repeatedClassPathHashing))
+    val report = Report(commandRunner.projectName, commandRunner.sbtVersion, now, Seq(update, startup, compile, repeatedClassPathHashing))
     report.writeToFile
   }
 
 }
 
-case class Report(time: OffsetDateTime, commands: Seq[RunResult]) {
+case class Report(projectName: String, sbtVersion: String, time: OffsetDateTime, commands: Seq[RunResult]) {
+
   def fileName = s"reports/$time.json"
+
   def writeToFile: Unit = {
     Files.write(Paths.get(fileName),
                 this.asJson.toString().getBytes(StandardCharsets.UTF_8))
@@ -58,5 +64,12 @@ case class SbtProject(projectName: String) {
     val duration = after - before
     println(s"Running command '${command.mkString(" ")}' took $duration ms")
     RunResult(command, description, duration, log)
+  }
+
+  lazy val sbtVersion = {
+    val x = Source
+      .fromFile(s"test-projects/$projectName/project/build.properties")
+      .mkString("").trim
+    x.split("=").last
   }
 }

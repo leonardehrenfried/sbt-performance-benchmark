@@ -18,12 +18,12 @@ object Benchmark extends App {
     val now = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC)
 
     val results = Seq(
-      commandRunner.run(Seq("sbt", "update"), "Prefill artifact cache"),
+      commandRunner.run(Seq("sbt", "cpl"), "Prefill artifact cache"),
       commandRunner.run(Seq("sbt", "sbtVersion"), "Test sbt startup"),
-      commandRunner.run(Seq("sbt", "cpl"), "Compile project once"),
+      commandRunner.run(Seq("sbt", "cpl"), "Compile project once, nothing to compile"),
       commandRunner.run(
         Seq("sbt", ";cpl;cpl"), // sys.process is adding quotes so none here
-        "Compile project twice, testing repeated hashing of an unchanged classpath")
+        "Compile project twice (nothing to compile), testing repeated hashing of an unchanged classpath")
     )
 
     val report =
@@ -38,7 +38,7 @@ case class Report(projectName: String,
                   time: OffsetDateTime,
                   commands: Seq[RunResult]) {
 
-  def fileName = s"reports/$time.json"
+  def fileName = s"reports/$projectName-$time.json"
 
   def writeToFile: Unit = {
     Files.write(Paths.get(fileName),

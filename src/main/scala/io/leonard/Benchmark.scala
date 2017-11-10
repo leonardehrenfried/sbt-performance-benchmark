@@ -26,15 +26,14 @@ object Benchmark extends App {
       )
     )
 
-    val map = results.flatten.groupBy(_.sbtVersion)
     val report =
-      Report(commandRunner.projectName, now, map)
+      Report(commandRunner.projectName, now, results)
     report.writeToFile()
   }
 
 }
 
-case class Report(projectName: String, time: OffsetDateTime, result: Map[String, Seq[RunResult]]) {
+case class Report(projectName: String, time: OffsetDateTime, results: Seq[TaskResult]) {
 
   def fileName = s"reports/$projectName-$time.json"
 
@@ -43,21 +42,23 @@ case class Report(projectName: String, time: OffsetDateTime, result: Map[String,
   }
 }
 
-case class RunResult(id: String,
-                     command: Seq[String],
-                     description: String,
-                     sbtVersion: String,
-                     durationMillis: Long,
-                     log: String)
+case class SbtVersionResult(sbtVersion: SbtVersion, durationMillis: Long, log: String)
+case class TaskResult(id: String,
+                      command: Seq[String],
+                      description: String,
+                      sbtVersions: Seq[SbtVersion],
+                      results: Map[TaskId, SbtVersionResult],
+)
 
 case class SbtProject(projectName: String) {
 
   val sbtVersions = Seq("0.13.16", "1.0.3")
 
-  def run(id: String, command: Seq[String], description: String): Seq[RunResult] = {
+  def run(id: TaskId, command: Seq[String], description: String): TaskResult = {
 
-    sbtVersions.map { version =>
-      val prefixedCommand = Seq("sbt", "-sbt-version", version) ++ command
+    val results = sbtVersions.map { sbtVersion =>
+      val prefixedCommand = Seq("sbt", "-sbt-version", sbtVersion) ++ command
+
       println("")
       println(s"Running command '${prefixedCommand.mkString(" ")}', description: '$description'")
 
@@ -70,8 +71,11 @@ case class SbtProject(projectName: String) {
 
       val duration = after - before
       println(s"Running command '${command.mkString(" ")}' took $duration ms")
-      RunResult(id, command, description, version, duration, log)
+      SbtVersionResult(sbtVersion, duration, log)
     }
+
+    val resultsMap = results.groupBy(_.sbtVersion).mapValues(_.head)
+    TaskResult(id, command, description, sbtVersions, resultsMap)
   }
 
 }

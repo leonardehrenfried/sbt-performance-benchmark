@@ -17,128 +17,62 @@
               <h1 id="tables">Benchmark report for project 'large-classpath'</h1>
             </div>
             <div class="bs-component">
-
-              
-
-                <h4>Prefill artifact cache</h4>
-
-                <div>
-                  <code>sbt cpl</code>
-                </div>
-
-                <table class="table table-bordered">
-                  <thead class="thead-dark">
-                    <tr>
-                      <th>sbt version</th>
-                      <th>duration (seconds)</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
+              <table class="table table-bordered">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>command</th>
                     
-                      <tr>
-                        <td>0.13.16</td>
-                        <td>93</td>
-                      </tr>
+                      <th>0.13.16</th>
                     
-                      <tr>
-                        <td>1.0.3</td>
-                        <td>150</td>
-                      </tr>
+                      <th>1.0.3</th>
                     
-                  </tbody>
-                </table>
-              
+                  </tr>
+                </thead>
 
-                <h4>Test sbt startup</h4>
+                <tbody>
+                
 
-                <div>
-                  <code>sbt sbtVersion</code>
-                </div>
-
-                <table class="table table-bordered">
-                  <thead class="thead-dark">
-                    <tr>
-                      <th>sbt version</th>
-                      <th>duration (seconds)</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
+                  <tr>
+                    <td><code>cpl</code></td>
                     
-                      <tr>
-                        <td>0.13.16</td>
-                        <td>44</td>
-                      </tr>
+                      <td>93 seconds</td>
                     
-                      <tr>
-                        <td>1.0.3</td>
-                        <td>51</td>
-                      </tr>
+                      <td>150 seconds</td>
                     
-                  </tbody>
-                </table>
-              
+                  </tr>
+                
 
-                <h4>Compile project once, nothing to compile</h4>
-
-                <div>
-                  <code>sbt cpl</code>
-                </div>
-
-                <table class="table table-bordered">
-                  <thead class="thead-dark">
-                    <tr>
-                      <th>sbt version</th>
-                      <th>duration (seconds)</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
+                  <tr>
+                    <td><code>sbtVersion</code></td>
                     
-                      <tr>
-                        <td>0.13.16</td>
-                        <td>95</td>
-                      </tr>
+                      <td>44 seconds</td>
                     
-                      <tr>
-                        <td>1.0.3</td>
-                        <td>176</td>
-                      </tr>
+                      <td>51 seconds</td>
                     
-                  </tbody>
-                </table>
-              
+                  </tr>
+                
 
-                <h4>Compile project twice (nothing to compile), testing repeated hashing of an unchanged classpath</h4>
-
-                <div>
-                  <code>sbt ;cpl;cpl</code>
-                </div>
-
-                <table class="table table-bordered">
-                  <thead class="thead-dark">
-                    <tr>
-                      <th>sbt version</th>
-                      <th>duration (seconds)</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
+                  <tr>
+                    <td><code>cpl</code></td>
                     
-                      <tr>
-                        <td>0.13.16</td>
-                        <td>111</td>
-                      </tr>
+                      <td>95 seconds</td>
                     
-                      <tr>
-                        <td>1.0.3</td>
-                        <td>213</td>
-                      </tr>
+                      <td>176 seconds</td>
                     
-                  </tbody>
-                </table>
-              
+                  </tr>
+                
+
+                  <tr>
+                    <td><code>;cpl;cpl</code></td>
+                    
+                      <td>111 seconds</td>
+                    
+                      <td>213 seconds</td>
+                    
+                  </tr>
+                
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

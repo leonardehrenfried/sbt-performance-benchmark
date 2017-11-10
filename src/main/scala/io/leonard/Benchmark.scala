@@ -39,9 +39,9 @@ object Benchmark extends App {
 
 case class Report(projectName: String, time: OffsetDateTime, results: Seq[TaskResult]) {
 
-  def fileName = s"reports/$projectName-$time.json"
-
   lazy val sbtVersions: Set[SbtVersion] = results.flatMap(_.sbtVersions).toSet
+
+  def fileName = s"reports/$projectName-$time.json"
 
   def writeJson(): Unit = Files.write(Paths.get(fileName), this.asJson.toString().getBytes(StandardCharsets.UTF_8))
   def writeHtml(): Unit = {

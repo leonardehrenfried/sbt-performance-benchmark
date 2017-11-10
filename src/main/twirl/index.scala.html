@@ -17,33 +17,28 @@
               <h1 id="tables">Benchmark report for project '@report.projectName'</h1>
             </div>
             <div class="bs-component">
-
-              @for(result <- report.results) {
-
-                <h4>@result.description</h4>
-
-                <div>
-                  <code>sbt @result.command</code>
-                </div>
-
-                <table class="table table-bordered">
-                  <thead class="thead-dark">
-                    <tr>
-                      <th>sbt version</th>
-                      <th>duration (seconds)</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    @for(result <- result.commands.toList.sortBy(_._1)) {
-                      <tr>
-                        <td>@result._1</td>
-                        <td>@{result._2.durationMillis / 1000}</td>
-                      </tr>
+              <table class="table table-bordered">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>command</th>
+                    @for(v <- report.sbtVersions) {
+                      <th>@v</th>
                     }
-                  </tbody>
-                </table>
-              }
+                  </tr>
+                </thead>
+
+                <tbody>
+                @for(r <- report.results) {
+
+                  <tr>
+                    <td><code>@r.command</code></td>
+                    @for(v <- report.sbtVersions) {
+                      <td>@{r.commands(v).durationMillis / 1000} seconds</td>
+                    }
+                  </tr>
+                }
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

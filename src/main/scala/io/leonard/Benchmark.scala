@@ -17,19 +17,17 @@ object Benchmark extends App {
 
     val now = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.UTC)
 
-    val update =
-      commandRunner.run(Seq("sbt", "update"), "Prefill artifact cache")
-    val startup =
-      commandRunner.run(Seq("sbt", "sbtVersion"), "Test sbt startup")
-    val compile = commandRunner.run(Seq("sbt", "cpl"), "Compile project once")
-    val repeatedClassPathHashing = commandRunner.run(
-      Seq("sbt", ";cpl;cpl"), // sys.process is adding quotes so none here
-      "Compile project twice, testing repeated hashing of an unchanged classpath")
+    val results = Seq(
+      commandRunner.run(Seq("sbt", "update"), "Prefill artifact cache"),
+      commandRunner.run(Seq("sbt", "sbtVersion"), "Test sbt startup"),
+      commandRunner.run(Seq("sbt", "cpl"), "Compile project once"),
+      commandRunner.run(
+        Seq("sbt", ";cpl;cpl"), // sys.process is adding quotes so none here
+        "Compile project twice, testing repeated hashing of an unchanged classpath")
+    )
 
-    val report = Report(commandRunner.projectName,
-                        commandRunner.sbtVersion,
-                        now,
-                        Seq(update, startup, compile, repeatedClassPathHashing))
+    val report =
+      Report(commandRunner.projectName, commandRunner.sbtVersion, now, results)
     report.writeToFile
   }
 

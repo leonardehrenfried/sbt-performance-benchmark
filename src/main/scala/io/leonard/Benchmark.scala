@@ -23,7 +23,7 @@ object Benchmark extends App {
       commandRunner.run(Seq("sbt", "sbtVersion"), "Test sbt startup")
     val compile = commandRunner.run(Seq("sbt", "cpl"), "Compile project once")
     val repeatedClassPathHashing = commandRunner.run(
-      Seq("sbt", ";cpl;cpl"),
+      Seq("sbt", ";cpl;cpl"), // sys.process is adding quotes so none here
       "Compile project twice, testing repeated hashing of an unchanged classpath")
 
     val report = Report(commandRunner.projectName,

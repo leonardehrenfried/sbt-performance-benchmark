@@ -30,9 +30,7 @@ object Benchmark extends App {
 
     val report = Report(commandRunner.projectName, now, results)
     report.writeJson()
-
-
-    val htmlReport = index(report)
+    report.writeHtml()
   }
 
 }
@@ -57,7 +55,7 @@ case class TaskResult(id: String,
                       command: Seq[String],
                       description: String,
                       sbtVersions: Seq[SbtVersion],
-                      commands: Map[TaskId, SbtVersionResult])
+                      results: Map[TaskId, SbtVersionResult])
 
 case class SbtProject(projectName: String) {
 

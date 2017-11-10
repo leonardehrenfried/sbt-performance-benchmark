@@ -12,7 +12,7 @@
         "0.13.16",
         "1.0.3"
       ],
-      "commands" : {
+      "results" : {
         "1.0.3" : {
           "sbtVersion" : "1.0.3",
           "durationMillis" : 150264,
@@ -35,7 +35,7 @@
         "0.13.16",
         "1.0.3"
       ],
-      "commands" : {
+      "results" : {
         "1.0.3" : {
           "sbtVersion" : "1.0.3",
           "durationMillis" : 51071,
@@ -58,7 +58,7 @@
         "0.13.16",
         "1.0.3"
       ],
-      "commands" : {
+      "results" : {
         "1.0.3" : {
           "sbtVersion" : "1.0.3",
           "durationMillis" : 176695,
@@ -81,7 +81,7 @@
         "0.13.16",
         "1.0.3"
       ],
-      "commands" : {
+      "results" : {
         "1.0.3" : {
           "sbtVersion" : "1.0.3",
           "durationMillis" : 213565,

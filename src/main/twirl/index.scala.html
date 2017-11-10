@@ -31,9 +31,9 @@
                 @for(r <- report.results) {
 
                   <tr>
-                    <td><code>@r.command</code></td>
+                    <td><code>@r.id</code></td>
                     @for(v <- report.sbtVersions) {
-                      <td>@{r.commands(v).durationMillis / 1000} seconds</td>
+                      <td>@{r.results(v).durationMillis / 1000} seconds</td>
                     }
                   </tr>
                 }

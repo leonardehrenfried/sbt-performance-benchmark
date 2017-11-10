@@ -73,19 +73,7 @@ object CakeBuildPlugin extends AutoPlugin {
     javaOptions += s"-Dcake.sbt.name=${name.value}",
     // prefer a per-application logback.xml in resources
     // javaOptions in Compile += s"-Dlogback.configurationFile=${(baseDirectory in ThisBuild).value}/logback-main.xml",
-    javaOptions ++= JavaSpecificFlags ++ Seq("-Xss2m", "-Dfile.encoding=UTF8"),
-    dependencyOverrides ++= Seq(
-      // scala-lang is always used during transitive ivy resolution (and potentially thrown out...)
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-      "org.scala-lang" % "scala-library" % scalaVersion.value,
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-      "org.scala-lang" % "scalap" % scalaVersion.value,
-      // user may have a different scala provider...
-      scalaOrganization.value % "scala-compiler" % scalaVersion.value,
-      scalaOrganization.value % "scala-library" % scalaVersion.value,
-      scalaOrganization.value % "scala-reflect" % scalaVersion.value,
-      scalaOrganization.value % "scalap" % scalaVersion.value
-    )
+    javaOptions ++= JavaSpecificFlags ++ Seq("-Xss2m", "-Dfile.encoding=UTF8")
   ) ++ inConfig(Test)(sensibleTestSettings) ++ inConfig(Compile)(
     sensibleCrossPath
   )

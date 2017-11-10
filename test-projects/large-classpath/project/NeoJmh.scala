@@ -87,18 +87,6 @@ object NeoJmh extends AutoPlugin {
         connectInput = connectInput.value,
         envVars = Map.empty[String, String]
       )
-      new ForkRun(options)
-        .run(
-          "org.openjdk.jmh.generators.bytecode.JmhBytecodeGenerator",
-          Attributed.data(classpath),
-          List(bytecodeDir.getPath,
-               sourceDir.getPath,
-               resourceDir.getPath,
-               generator),
-          s.log
-        )
-        .failed
-        .foreach(f => sys.error(f.getMessage))
 
       ((sourceDir ** "*").filter(_.isFile) +++ (resourceDir ** "*").filter(
         _.isFile)).get.toSet

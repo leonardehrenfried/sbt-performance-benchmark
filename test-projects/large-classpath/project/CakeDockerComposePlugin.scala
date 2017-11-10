@@ -9,6 +9,7 @@ import sbt.Keys._
 import com.typesafe.sbt.packager.Keys._
 import com.typesafe.sbt.packager.docker._
 import com.typesafe.sbt.SbtNativePackager._
+import scala.sys.process._
 
 object CakeDockerComposePlugin extends AutoPlugin {
   override def requires = CakeDockerPlugin
@@ -36,15 +37,14 @@ object CakeDockerComposePlugin extends AutoPlugin {
 
   val dockerComposeUpQuickTask: Def.Initialize[Task[Unit]] = Def.task {
     val input = dockerComposeFile.value.getCanonicalPath
-    val res = s"docker-compose $projectName -f $input up -d".!
+    val res = 1
     if (res != 0)
       throw new IllegalStateException(s"docker-compose up returned $res")
   }
 
   val dockerComposeDownTask: Def.Initialize[Task[Unit]] = Def.task {
     val input = dockerComposeFile.value.getCanonicalPath
-    s"docker-compose $projectName -f $input kill -s 9".! // much faster
-    val res = s"docker-compose $projectName -f $input down".!
+    val res = 1
     if (res != 0)
       throw new IllegalStateException(s"docker-compose down returned $res")
   }
@@ -58,17 +58,13 @@ object CakeDockerComposePlugin extends AutoPlugin {
       case Some(repo) => s"${repo}/${image}"
     }
     var limit = 100
-    def doit(): List[String] = {
+    def doit(): Iterable[String] = {
       if (limit == 0) throw new IllegalStateException("deleted too many times")
       limit -= 1
-      val lines = "docker images".!!.split("\\n").toList
+      val lines = Seq("docker images")
       val Line = "^([^ ]+)[ ]+([^ ]+)[ ]+([^ ]+)[ ]+.*$".r
       val ids = lines.collect {
         case Line(repo, tag, id) if repo == repository => id
-      }
-      // alias deletes often fail, so only delete the head and loop
-      ids.headOption.foreach { id =>
-        s"docker rmi -f $id".!
       }
       ids
     }

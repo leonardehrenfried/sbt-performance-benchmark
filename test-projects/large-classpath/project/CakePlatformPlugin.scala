@@ -65,56 +65,10 @@ object CakePlatformPlugin extends AutoPlugin {
   override val buildSettings = Seq()
 
   override val projectSettings = Seq(
-    dependencyOverrides ++= Seq(
-      "io.netty" % "netty" % "3.10.6.Final" // akka remoting only works on netty 3
-    ),
-    // trust me, you don't ever want to get your stdlib versions out of sync...
-    dependencyOverrides ++= Seq(
-      // user may have a different scala provider...
-      scalaOrganization.value % "scala-compiler" % scalaVersion.value,
-      scalaOrganization.value % "scala-library" % scalaVersion.value,
-      scalaOrganization.value % "scala-reflect" % scalaVersion.value,
-      scalaOrganization.value % "scalap" % scalaVersion.value
-    ),
     // logging should be available everywhere (opt out if you really must...)
     libraryDependencies ++= deps.logback,
-    dependencyOverrides ++= deps.logback,
     libraryDependencies += "com.typesafe" % "config" % "1.3.1",
-    libraryDependencies ++= deps.testing(Test),
-    // the naughty list
-    excludeDependencies ++= Seq(
-      // we don't want another https://issues.apache.org/jira/browse/CASSANDRA-10984
-      ExclusionRule("io.netty", "netty-all"),
-      // clean up the mess made by everybody who doesn't use slf4j...
-      ExclusionRule("org.apache.logging.log4j", "log4j-api-scala_2.10"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-liquibase"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-jul"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-iostreams"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-nosql"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-bom"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-osgi"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-api-scala_2.11"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-jmx-gui"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-taglib"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-web"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-flume-ng"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-jcl"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-to-slf4j"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-slf4j-impl"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-1.2-api"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-core-its"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-core"),
-      ExclusionRule("org.apache.logging.log4j", "log4j-api"),
-      ExclusionRule("org.apache.logging.log4j", "log4j"),
-      ExclusionRule("log4j", "apache-log4j-extras"),
-      ExclusionRule("log4j", "log4j"),
-      ExclusionRule("commons-logging", "commons-logging"),
-      ExclusionRule("commons-logging", "commons-logging-api"),
-      ExclusionRule("commons-logging", "commons-logging-adapters"),
-      ExclusionRule("org.slf4j", "slf4j-log4j12"),
-      ExclusionRule("org.slf4j", "slf4j-jdk14"),
-      ExclusionRule("org.slf4j", "slf4j-jcl.jar")
-    )
+    libraryDependencies ++= deps.testing(Test)
   )
 
 }

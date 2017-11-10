@@ -221,15 +221,6 @@ object ProjectPluginKeys {
         connectInput = connectInput.value,
         envVars = (envVars in Compile).value
       )
-      new ForkRun(options)
-        .run(
-          (mainClass in assembly).value.get,
-          Attributed.data((fullClasspath in Compile).value),
-          Nil,
-          log
-        )
-        .failed
-        .foreach(f => sys.error(f.getMessage))
 
       log.info(s"Summary is in $results")
     }
